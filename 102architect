@@ -1,0 +1,48 @@
+#!/usr/bin/python3
+
+import sys
+import math
+
+def h():
+    print("USAGE")
+    print("\t./102architect x y transfo1 arg11 [arg12] [transfo2 arg12 [arg22]] ...")
+    print("")
+    print("DESCRIPTION")
+    print("\tx abscissa of the original point")
+    print("\ty ordinate of the original point")
+    print("")
+    print("\ttransfo arg1 [arg2]")
+    print("\t-t i j translation along vector (i, j)")
+    print("\t-z m n scaling by factors m (x-axis) and n (y-axis)")
+    print("\t-r d rotation centered in 0 by a d degree angle")
+    print("\t-s d reflection over the axis passing through 0 with an inclination")
+    print("\t\tangle of d degrees")
+
+class Printer:
+    def __init__(self):
+        self.factory = {
+            'z': self.aff_z,
+            'n': self.aff_name
+        }
+
+    def aff_z(self):
+        print('Z')
+
+    def aff_name(self, name, age):
+        print("Je m'appelle {} et j'ai {} ans".format(name, age))
+
+def main():
+    av = sys.argv
+    l = len(sys.argv)
+    p = Printer()
+    if (av[1] == "-h"):
+        h()
+    else:
+        if (l >= 1):
+            for arg in sys.argv:
+                p.factory[arg]()
+        else:
+            exit(84)
+
+if __name__ == "__main__":
+    main()
