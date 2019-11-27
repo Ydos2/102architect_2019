@@ -8,41 +8,109 @@ def h():
     print("\t./102architect x y transfo1 arg11 [arg12] [transfo2 arg12 [arg22]] ...")
     print("")
     print("DESCRIPTION")
-    print("\tx abscissa of the original point")
-    print("\ty ordinate of the original point")
+    print("\tx\tabscissa of the original point")
+    print("\ty\tordinate of the original point")
     print("")
     print("\ttransfo arg1 [arg2]")
-    print("\t-t i j translation along vector (i, j)")
-    print("\t-z m n scaling by factors m (x-axis) and n (y-axis)")
-    print("\t-r d rotation centered in 0 by a d degree angle")
-    print("\t-s d reflection over the axis passing through 0 with an inclination")
+    print("\t-t i j\ttranslation along vector (i, j)")
+    print("\t-z m n\tscaling by factors m (x-axis) and n (y-axis)")
+    print("\t-r d\trotation centered in 0 by a d degree angle")
+    print("\t-s d\treflection over the axis passing through 0 with an inclination")
     print("\t\tangle of d degrees")
 
-class Printer:
-    def __init__(self):
-        self.factory = {
-            'z': self.aff_z,
-            'n': self.aff_name
-        }
+def matrice(av, l):
+    try :
+        arg1 = av[1]
+        arg2 = av[2]
+        i = 3
+        l = l - 3
+        matrice_val = [1.00, 0.00, 0.00, 0.00, 1.00, 0.00, 0.00, 0.00, 1.00, float(arg1), float(arg2)]
+        while (l > 0):
+            if (av[i] == "-t"):
+                matrice_val = transform(av, i, matrice_val)
+                i += 3
+                l -= 3
+            else:
+                if (av[i] == "-r"):
+                    matrice_val = rotate(av, i, matrice_val)
+                    i += 2
+                    l -= 2
+                else:
+                    if (av[i] == "-z"):
+                        matrice_val = scaling(av, i, matrice_val)
+                        i += 3
+                        l -= 3
+                    else:
+                        if (av[i] == "-s"):
+                            matrice_val = scaling(av, i, matrice_val)
+                            i += 2
+                            l -= 2
+                        else:
+                            exit (84)
+        print("%.2f" % matrice_val[0] , "\t" , "%.2f" % matrice_val[1] , "\t" , "%.2f" % matrice_val[2], sep ='')
+        print("%.2f" % matrice_val[3] , "\t" , "%.2f" % matrice_val[4] , "\t" , "%.2f" % matrice_val[5], sep ='')
+        print("%.2f" % matrice_val[6] , "\t" , "%.2f" % matrice_val[7] , "\t" , "%.2f" % matrice_val[8], sep ='')
+        print("(", "%.2f" % float(arg1), ", ", "%.2f" % float(arg2), ") => (", "%.2f" % matrice_val[9], ", ", "%.2f" % matrice_val[10], ")", sep ='')
+    except :
+        exit(84)
 
-    def aff_z(self):
-        print('Z')
+def transform(av, i, matrice_val):
+    a = i + 1
+    b = i + 2
+    arg1 = av[a]
+    arg2 = av[b]
+    z = matrice_val[9]
+    y = matrice_val[10]
+    print("Translation along vector (" + arg1 + ", " + arg2 + ")")
+    matrice_val[2] = float(arg1) + z
+    matrice_val[5] = float(arg2) + y
+    matrice_val[9] = float(arg1) + z
+    matrice_val[10] = float(arg2) + y
+    return (matrice_val)
 
-    def aff_name(self, name, age):
-        print("Je m'appelle {} et j'ai {} ans".format(name, age))
+def scaling(av, i, matrice_val):
+    a = i + 1
+    b = i + 2
+    arg1 = av[a]
+    arg2 = av[b]
+    print("Scaling by factors " + arg1 + " and " + arg2)
+    matrice_val[0] = float(arg1) * matrice_val[0]
+    matrice_val[4] = float(arg2) * matrice_val[4]
+    matrice_val[9] = float(arg1) * matrice_val[9]
+    matrice_val[10] = float(arg2) * matrice_val[10]
+    return (matrice_val)
+
+def rotate(av, i, matrice_val):
+    a = i + 1
+    arg1 = av[a]
+    print("Rotation by a " + arg1 + " degree angle")
+    matrice_val[0] = math.cos(float(arg1))
+    matrice_val[1] = math.sin(float(arg1))
+    matrice_val[3] = math.sin(float(arg1)) * -1.00
+    matrice_val[4] = math.cos(float(arg1))
+    return (matrice_val)
+
+def reflection(av, i, matrice_val):
+    a = i + 1
+    arg1 = av[a]
+    print("Reflection over an axis with an inclination angle of " + arg1 + " degrees")
+    matrice_val[0] = float(arg1) * matrice_val[0]
+    matrice_val[4] = float(arg1) * matrice_val[4]
+    return (matrice_val)
 
 def main():
-    av = sys.argv
-    l = len(sys.argv)
-    p = Printer()
-    if (av[1] == "-h"):
-        h()
-    else:
-        if (l >= 1):
-            for arg in sys.argv:
-                p.factory[arg]()
+    try :
+        av = sys.argv
+        l = len(sys.argv)
+        if (av[1] == "-h"):
+            h()
         else:
-            exit(84)
+            if (l > 2):
+                matrice(av, l)
+            else:
+                exit(84)
+    except :
+        exit(84)
 
 if __name__ == "__main__":
     main()
